@@ -242,7 +242,7 @@ int main() {
   addItem(myList, 1, 55);
   printList(myList); // Output: 55 -> 99 -> 0 -> NULL
   addItem(myList, 3, 10);
-  printList(myList); // Output: 99 -> 0 -> NULL
+  printList(myList); // Output: 10 -> 55 -> 99 -> 0 -> NULL
 
   // Prevent memoty leaks
   destroyList(myList);

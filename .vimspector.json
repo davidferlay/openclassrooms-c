@@ -2,15 +2,21 @@
   "configurations": {
     "Launch C main": {
       "adapter": "vscode-cpptools",
+      "breakpoints": {
+        "exception": {
+          "all": "N"
+        }
+      },
       "configuration": {
         "request": "launch",
         "program": "${workspaceRoot}/main",
         "args": [],
-        "stopAtEntry": false,
+        "stopAtEntry": true,
         "cwd": "${workspaceRoot}",
         "environment": [],
-        "externalConsole": true,
+        "externalConsole": false,
         "MIMode": "gdb",
+        "miDebuggerPath": "/usr/bin/gdb",
         "setupCommands": [
           {
             "description": "Enable pretty-printing for gdb",
@@ -20,8 +26,9 @@
         ]
       },
       "preLaunchTask": {
-        "shell": "gcc main.c -o main -Wall -Wextra -Wconversion -fsanitize=address"
+        "shell": "gcc -g -O0 -fsanitize=address -Wall -Wextra -Wconversion main.c -o main"
       }
     }
   }
 }
+
