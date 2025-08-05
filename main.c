@@ -86,7 +86,7 @@ void addItem(List *list, int index, int newValue) {
     exit(1);
   }
 
-  printf("Item to add: %d (index: %d)\n", current->number,
+  printf("Item to add: %d (index: %d)\n", newValue,
          index); // Print the value
   printf("Previous item whose next value should be updated: %d\n",
          previous->number); // Print the value
@@ -98,8 +98,8 @@ void addItem(List *list, int index, int newValue) {
   }
   newElement->number = newValue; // Set the value
   newElement->next =
-      current->next; // Set the next element (previously existing one)
-  previous->next = newElement->next;
+      previous->next; // Set the next element (previously existing one)
+  previous->next = newElement;
   printf("Item to add: %d (index: %d)\n", newValue, index);
 }
 
