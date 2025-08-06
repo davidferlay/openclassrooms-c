@@ -34,7 +34,7 @@ void addItemFirst(List *list, int newValue) {
   newElement->next = list->first; // Point to the current first element
 
   list->first = newElement; // Update the list to point to the new first element
-  printf("Item to add as first element: %d\n", newValue);
+  printf("Item to add: %d (first)\n", newValue);
 }
 
 void addItemLast(List *list, int newValue) {
@@ -63,7 +63,7 @@ void addItemLast(List *list, int newValue) {
   printf("Previous item whose next value should be updated: %d\n",
          current->number);
   current->next = newElement; // Update last item to point to new element
-  printf("Item to add as last element: %d\n", newValue);
+  printf("Item to add: %d (last)\n", newValue);
 }
 
 void addItem(List *list, int index, int newValue) {
@@ -95,9 +95,9 @@ void addItem(List *list, int index, int newValue) {
     exit(1);
   }
 
-  printf("Item to add: %d (index: %d)\n", newValue, index); // Print the value
+  printf("Item to add: %d (index: %d)\n", newValue, index);
   printf("Previous item whose next value should be updated: %d\n",
-         previous->number); // Print the value
+         previous->number);
 
   Element *newElement = malloc(sizeof(*newElement)); // Create the new element
   if (list == NULL || newElement == NULL) {
@@ -107,7 +107,6 @@ void addItem(List *list, int index, int newValue) {
   newElement->next =
       previous->next; // Set the next element (previously existing one)
   previous->next = newElement;
-  printf("Item to add: %d (index: %d)\n", newValue, index);
 }
 
 void deleteItemFirst(List *list) {
@@ -119,8 +118,43 @@ void deleteItemFirst(List *list) {
     Element *toDelete = list->first; // Save the element to delete
     list->first =
         list->first->next; // Move the list's pointer to the second element
-    free(toDelete);        // Free memory of the removed element
+    printf("Item to delete: %d (first)\n", toDelete->number);
+    free(toDelete); // Free memory of the removed element
   }
+}
+
+void deleteItemLast(List *list) {
+  if (list == NULL) { // Check that list exists
+    exit(1);          // Exit if not
+  }
+
+  if (list->first == NULL) { // If list is empty, new element is the first
+    printf("Item to delete: None (list is already empty)\n");
+    return;
+  }
+
+  Element *current = list->first; // Start with the first element
+  Element *previous = NULL;       // Case where there is only one item in list
+  Element *toDelete = NULL;       // Start with the first element
+
+  while (current->next != NULL) { // Iterate over list till last element
+    previous = current; // Save previous item in a variable since we will need
+                        // to update it's next value
+    current = current->next; // Move to the next node
+  }
+
+  if (current == list->first) {
+    printf("Previous item whose next value should be updated: list control\n");
+    toDelete = list->first; // Save the element to delete
+    list->first = NULL;
+  } else {
+    toDelete = previous->next;      // Save the element to delete
+    previous->next = current->next; // Should always take value NULL
+    printf("Previous item whose next value should be updated: %d\n",
+           previous->number);
+  }
+  printf("Item to delete: %d (last)\n", toDelete->number);
+  free(toDelete);
 }
 
 void deleteItem(List *list, int index) {
@@ -152,10 +186,9 @@ void deleteItem(List *list, int index) {
     exit(1);
   }
 
-  printf("Item to delete: %d (index: %d)\n", current->number,
-         index); // Print the value
+  printf("Item to delete: %d (index: %d)\n", current->number, index);
   printf("Previous item whose next value should be updated: %d\n",
-         previous->number); // Print the value
+         previous->number);
 
   Element *toDelete = previous->next; // Save the element to delete
   previous->next = current->next; // previous->next = previous->next->next; ///
@@ -182,7 +215,7 @@ void updateItem(List *list, int index, int newValue) {
   }
 
   printf("Item to update: %d -> %d (index: %d)\n", current->number, newValue,
-         index); // Print the value
+         index);
   current->number = newValue;
 }
 
@@ -204,8 +237,7 @@ void printItem(List *list, int index) {
     exit(1);
   }
 
-  printf("Item to print: %d (index: %d)\n", current->number,
-         index); // Print the value
+  printf("Item to print: %d (index: %d)\n", current->number, index);
 }
 
 void printList(List *list) {
@@ -216,8 +248,8 @@ void printList(List *list) {
   Element *current = list->first; // Start with the first element
 
   while (current != NULL) {
-    printf("%d -> ", current->number); // Print the value
-    current = current->next;           // Move to the next node
+    printf("%d -> ", current->number);
+    current = current->next; // Move to the next node
   }
   printf("NULL\n"); // Indicate end of the list
 }
@@ -242,33 +274,47 @@ int main() {
   printList(myList);           // Output: NULL
 
   // Adding elements
-  addItemLast(myList, 77);  // Add element with value 77
-  printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
-  addItemFirst(myList, 4);  // Add element with value 4
-  addItemFirst(myList, 8);  // Add element with value 8
-  addItemFirst(myList, 15); // Add element with value 15
-  printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
-  addItemLast(myList, 66);  // Add element with value 66
-  printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
-  printItem(myList, 2);     // Output: 8
-
-  // Deleting elements
-  deleteItemFirst(myList); // Remove the first element (15)
-  printList(myList);       // Output: 8 -> 4 -> 0 -> NULL
-  deleteItem(myList, 2);
-  printList(myList); // Output: 8 -> 0 -> NULL
+  addItemLast(myList, 77);
+  printList(myList);
+  addItemFirst(myList, 4);
+  addItemFirst(myList, 8);
+  addItemFirst(myList, 15);
+  printList(myList);
+  addItemLast(myList, 66);
+  printList(myList);
+  printItem(myList, 2);
 
   // Updating element at index
   updateItem(myList, 1, 99);
-  printList(myList); // Output: 99 -> 0 -> NULL
+  printList(myList);
 
   // Adding element at index
   addItem(myList, 1, 55);
-  printList(myList); // Output: 55 -> 99 -> 0 -> NULL
+  printList(myList);
   addItem(myList, 3, 10);
-  printList(myList); // Output: 55 -> 99 -> 10 -> 0 -> NULL
+  printList(myList);
   addItem(myList, 2, 20);
-  printList(myList); // Output: 55 -> 20 -> 99 -> 10 -> 0 -> NULL
+  printList(myList);
+
+  // Deleting elements
+  deleteItemFirst(myList);
+  printList(myList);
+  deleteItem(myList, 2);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
+  deleteItemLast(myList);
+  printList(myList);
 
   // Prevent memoty leaks
   destroyList(myList);
