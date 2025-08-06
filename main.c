@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,38 +21,50 @@ List *initialize() {
     exit(1); // Exit the program if memory allocation fails
   }
 
-  element->number = 0;   // Initialize the value of the first element to 0
-  element->next = NULL;  // It doesn't point to anything yet (end of list)
+  /*element->number = 0;   // Initialize the value of the first element to 0*/
+  /*element->next = NULL;  // It doesn't point to anything yet (end of list)*/
   list->first = element; // Point the list to this first element
 
   return list; // Return the initialized list
 }
 
-void insertFirstItem(List *list, int newNumber) {
-  /* Create the new element */
-  Element *newElement = malloc(sizeof(*newElement));
-  if (list == NULL || newElement == NULL) {
-    exit(1); // Exit if allocation failed
+void addItemFirst(List *list, int newValue) {
+  Element *newElement = malloc(sizeof(*newElement)); // Create the new element
+  if (list == NULL || newElement == NULL) { // Check that both list exist and
+                                            // new element created successfuly
+    exit(1);                                // Exit if not
   }
-  newElement->number = newNumber; // Set the value
 
-  /* Insert at the beginning */
+  newElement->number = newValue;  // Set the value
   newElement->next = list->first; // Point to the current first element
+
   list->first = newElement; // Update the list to point to the new first element
-  printf("Item to add as first element: %d\n", newNumber);
+  printf("Item to add as first element: %d\n", newValue);
 }
 
-void deleteFirstItem(List *list) {
-  if (list == NULL) {
-    exit(1); // Cannot work with a NULL list
+void addItemLast(List *list, int newValue) {
+  Element *newElement = malloc(sizeof(*newElement)); // Create the new element
+  if (list == NULL || newElement == NULL) { // Check that both list exist and
+                                            // new element created successfuly
+    exit(1);                                // Exit if not
   }
 
-  if (list->first != NULL) {
-    Element *toDelete = list->first; // Save the element to delete
-    list->first =
-        list->first->next; // Move the list's pointer to the second element
-    free(toDelete);        // Free memory of the removed element
+  if (list->first == NULL) {
+    // The list is empty: new element becomes the first
+    addItemFirst(list, newValue);
+    return;
   }
+
+  Element *current = list->first; // Start with the first element
+  while (current->next != NULL) { // Iterate over list till last element
+    current = current->next;      // Move to the next node
+  }
+
+  newElement->number = newValue; // Set the value
+  newElement->next = NULL;       // NULL for end of list
+
+  current->next = newElement; // Update last item to point to new element
+  printf("Item to add as last element: %d\n", newValue);
 }
 
 void addItem(List *list, int index, int newValue) {
@@ -61,12 +72,11 @@ void addItem(List *list, int index, int newValue) {
     exit(1); // Cannot work with a NULL list
   }
 
-  if (index <= 1) { // If adding first item (index 0 or 1 if one-based),
-                    // forward to dedicated function
-    insertFirstItem(list, newValue);
-    return;
+  if (index <= 1) { // If adding first item (index 0 or 1 if one-based), forward
+                    // to dedicated function
+    addItemFirst(list, newValue);
+    return; // Otherwise go on
   }
-  // Otherwise go on
 
   Element *current = list->first; // Start with the first element
   Element *previous = NULL; // Init pointer with default value to store it later
@@ -86,13 +96,11 @@ void addItem(List *list, int index, int newValue) {
     exit(1);
   }
 
-  printf("Item to add: %d (index: %d)\n", newValue,
-         index); // Print the value
+  printf("Item to add: %d (index: %d)\n", newValue, index); // Print the value
   printf("Previous item whose next value should be updated: %d\n",
          previous->number); // Print the value
 
-  /* Create the new element */
-  Element *newElement = malloc(sizeof(*newElement));
+  Element *newElement = malloc(sizeof(*newElement)); // Create the new element
   if (list == NULL || newElement == NULL) {
     exit(1); // Exit if allocation failed
   }
@@ -103,6 +111,19 @@ void addItem(List *list, int index, int newValue) {
   printf("Item to add: %d (index: %d)\n", newValue, index);
 }
 
+void deleteItemFirst(List *list) {
+  if (list == NULL) {
+    exit(1); // Cannot work with a NULL list
+  }
+
+  if (list->first != NULL) {
+    Element *toDelete = list->first; // Save the element to delete
+    list->first =
+        list->first->next; // Move the list's pointer to the second element
+    free(toDelete);        // Free memory of the removed element
+  }
+}
+
 void deleteItem(List *list, int index) {
   if (list == NULL) {
     exit(1); // Cannot work with a NULL list
@@ -110,10 +131,9 @@ void deleteItem(List *list, int index) {
 
   if (index <= 1) { // If deleting first item (index 0 or 1 if one-based),
                     // forward to dedicated function
-    deleteFirstItem(list);
-    return;
+    deleteItemFirst(list);
+    return; // Otherwise go on
   }
-  // Otherwise go on
 
   Element *current = list->first; // Start with the first element
   Element *previous = NULL; // Init pointer with default value to store it later
@@ -139,8 +159,8 @@ void deleteItem(List *list, int index) {
          previous->number); // Print the value
 
   Element *toDelete = previous->next; // Save the element to delete
-  previous->next = current->next;
-  // previous->next = previous->next->next; /// Can also be written that way
+  previous->next = current->next; // previous->next = previous->next->next; ///
+                                  // Can also be written that way
   free(toDelete);
 }
 
@@ -220,16 +240,21 @@ void destroyList(List *list) {
 
 int main() {
   List *myList = initialize(); // Start with an initialized list
+  printList(myList);           // Output: 15 -> 8 -> 4 -> 0 -> NULL
 
   // Adding elements
-  insertFirstItem(myList, 4);  // Add element with value 4
-  insertFirstItem(myList, 8);  // Add element with value 8
-  insertFirstItem(myList, 15); // Add element with value 15
-  printList(myList);           // Output: 15 -> 8 -> 4 -> 0 -> NULL
-  printItem(myList, 2);        // Output: 8
+  addItemLast(myList, 77);  // Add element with value 66
+  printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
+  addItemFirst(myList, 4);  // Add element with value 4
+  addItemFirst(myList, 8);  // Add element with value 8
+  addItemFirst(myList, 15); // Add element with value 15
+  printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
+  addItemLast(myList, 66);  // Add element with value 66
+  printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
+  printItem(myList, 2);     // Output: 8
 
   // Deleting elements
-  deleteFirstItem(myList); // Remove the first element (15)
+  deleteItemFirst(myList); // Remove the first element (15)
   printList(myList);       // Output: 8 -> 4 -> 0 -> NULL
   deleteItem(myList, 2);
   printList(myList); // Output: 8 -> 0 -> NULL
