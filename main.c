@@ -14,18 +14,13 @@ struct List {
 
 List *initialize() {
   List *list = malloc(sizeof(*list)); // Allocate memory for the list structure
-  Element *element =
-      malloc(sizeof(*element)); // Allocate memory for the first node
 
-  if (list == NULL || element == NULL) {
+  if (list == NULL) {
     exit(1); // Exit the program if memory allocation fails
   }
 
-  /*element->number = 0;   // Initialize the value of the first element to 0*/
-  /*element->next = NULL;  // It doesn't point to anything yet (end of list)*/
-  list->first = element; // Point the list to this first element
-
-  return list; // Return the initialized list
+  list->first = NULL; // Initialize with no elements
+  return list;        // Return the initialized empty list
 }
 
 void addItemFirst(List *list, int newValue) {
@@ -43,16 +38,18 @@ void addItemFirst(List *list, int newValue) {
 }
 
 void addItemLast(List *list, int newValue) {
-  Element *newElement = malloc(sizeof(*newElement)); // Create the new element
-  if (list == NULL || newElement == NULL) { // Check that both list exist and
-                                            // new element created successfuly
-    exit(1);                                // Exit if not
+  if (list == NULL) { // Check that list exists
+    exit(1);          // Exit if not
   }
 
-  if (list->first == NULL) {
-    // The list is empty: new element becomes the first
+  if (list->first == NULL) { // If list is empty, new element is the first
     addItemFirst(list, newValue);
     return;
+  }
+
+  Element *newElement = malloc(sizeof(*newElement)); // Create the new element
+  if (newElement == NULL) { // Check that new element was created successfuly
+    exit(1);                // Exit if not
   }
 
   Element *current = list->first; // Start with the first element
@@ -63,6 +60,8 @@ void addItemLast(List *list, int newValue) {
   newElement->number = newValue; // Set the value
   newElement->next = NULL;       // NULL for end of list
 
+  printf("Previous item whose next value should be updated: %d\n",
+         current->number);
   current->next = newElement; // Update last item to point to new element
   printf("Item to add as last element: %d\n", newValue);
 }
@@ -240,10 +239,10 @@ void destroyList(List *list) {
 
 int main() {
   List *myList = initialize(); // Start with an initialized list
-  printList(myList);           // Output: 15 -> 8 -> 4 -> 0 -> NULL
+  printList(myList);           // Output: NULL
 
   // Adding elements
-  addItemLast(myList, 77);  // Add element with value 66
+  addItemLast(myList, 77);  // Add element with value 77
   printList(myList);        // Output: 15 -> 8 -> 4 -> 0 -> NULL
   addItemFirst(myList, 4);  // Add element with value 4
   addItemFirst(myList, 8);  // Add element with value 8
