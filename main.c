@@ -134,8 +134,8 @@ void deleteItemLast(List *list) {
   }
 
   Element *current = list->first; // Start with the first element
-  Element *previous = NULL;       // Case where there is only one item in list
-  Element *toDelete = NULL;       // Start with the first element
+  Element *previous = NULL;
+  Element *toDelete = NULL;
 
   while (current->next != NULL) { // Iterate over list till last element
     previous = current; // Save previous item in a variable since we will need
@@ -148,8 +148,8 @@ void deleteItemLast(List *list) {
     toDelete = list->first; // Save the element to delete
     list->first = NULL;
   } else {
-    toDelete = previous->next;      // Save the element to delete
-    previous->next = current->next; // Should always take value NULL
+    toDelete = previous->next;      // aka toDelete = current;
+    previous->next = current->next; // aka NULL
     printf("Previous item whose next value should be updated: %d\n",
            previous->number);
   }
